@@ -4,7 +4,8 @@ use FlightDocs_System
 CREATE TABLE Users (
     UserID INT PRIMARY KEY IDENTITY(1,1), -- Khóa chính tự tăng, IDENTITY thay cho AUTO_INCREMENT
     Username VARCHAR(100) NOT NULL,        -- Tên đăng nhập
-    Email VARCHAR(100) NOT NULL,           -- Email người dùng (phải có dạng @vietjetair.com)
+    Email VARCHAR(100) NOT NULL,			-- Email người dùng (phải có dạng @vietjetair.com)
+	Password VARCHAR(255) NOT NULL,			-- Mật khẩu
     Role NVARCHAR(50) NOT NULL,            -- Vai trò trong hệ thống
     FullName NVARCHAR(255),                -- Tên đầy đủ của người dùng
     PhoneNumber VARCHAR(20),               -- Số điện thoại (nếu cần)
@@ -45,4 +46,3 @@ CREATE TABLE Document (
     ModifiedAt DATETIME DEFAULT GETDATE(),    -- Thời gian chỉnh sửa cuối cùng
     FOREIGN KEY (FlightID) REFERENCES Flight(FlightID) ON DELETE CASCADE, -- Xóa chuyến bay thì xóa tài liệu
 );
-
