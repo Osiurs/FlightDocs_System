@@ -12,6 +12,8 @@ builder.Services.AddDbContext<FlightDocsContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<IDocumentService, DocumentService>();
+builder.Services.AddScoped<IUserFlightAssignmentService, UserFlightAssignmentService>();
+
 
 // Thêm controller
 builder.Services.AddControllers();

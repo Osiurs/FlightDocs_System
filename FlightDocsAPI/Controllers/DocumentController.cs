@@ -16,7 +16,7 @@ namespace FlightDocsAPI.Controllers
         }
 
         [HttpPost("upload")]
-        public async Task<IActionResult> UploadDocument([FromBody] DocumentModel model)
+        public async Task<IActionResult> UploadDocument([FromBody] Document model)
         {
             var document = await _documentService.UploadDocumentAsync(model);
             return CreatedAtAction(nameof(GetDocumentById), new { id = document.DocumentID }, document);
