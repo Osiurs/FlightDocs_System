@@ -33,8 +33,8 @@ namespace FlightDocsAPI.Controllers
         [HttpGet("flight/{flightId}")]
         public async Task<IActionResult> GetDocumentsByFlight(int flightId)
         {
-            var documents = await _documentService.GetDocumentsByFlightIdAsync(flightId);
-            return Ok(documents);
+            var document = await _documentService.GetDocumentsByFlightIdAsync(flightId);
+            return Ok(document);
         }
 
         [HttpDelete("{id}")]

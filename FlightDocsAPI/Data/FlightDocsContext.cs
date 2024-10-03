@@ -10,7 +10,7 @@ namespace FlightDocsAPI.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Flight> Flights { get; set; }
         public DbSet<UserFlightAssignment> UserFlightAssignments { get; set; }
-        public DbSet<Document> Documents { get; set; }
+        public DbSet<Document> Document { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,7 +45,7 @@ namespace FlightDocsAPI.Data
             // Thiết lập quan hệ giữa Flight và Document
             modelBuilder.Entity<Document>()
                 .HasOne(d => d.Flight)
-                .WithMany(f => f.Documents)
+                .WithMany(f => f.Document)
                 .HasForeignKey(d => d.FlightID)
                 .OnDelete(DeleteBehavior.Cascade); // Xóa chuyến bay sẽ xóa các tài liệu liên quan
         }

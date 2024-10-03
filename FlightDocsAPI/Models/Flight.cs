@@ -12,6 +12,6 @@ namespace FlightDocsAPI.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
         public ICollection<UserFlightAssignment> Assignments { get; set; }
-        public ICollection<Document> Documents { get; set; }
+        public ICollection<Document> Document { get; set; }
     }
 }

@@ -24,27 +24,27 @@ namespace FlightDocsAPI.Services
                 ModifiedAt = DateTime.Now
             };
 
-            _context.Documents.Add(document);
+            _context.Document.Add(document);
             await _context.SaveChangesAsync();
             return document;
         }
 
         public async Task<Document> GetDocumentByIdAsync(int id)
         {
-            return await _context.Documents.FindAsync(id);
+            return await _context.Document.FindAsync(id);
         }
 
         public async Task<IEnumerable<Document>> GetDocumentsByFlightIdAsync(int flightId)
         {
-            return await _context.Documents.Where(d => d.FlightID == flightId).ToListAsync();
+            return await _context.Document.Where(d => d.FlightID == flightId).ToListAsync();
         }
 
         public async Task<bool> DeleteDocumentAsync(int id)
         {
-            var document = await _context.Documents.FindAsync(id);
+            var document = await _context.Document.FindAsync(id);
             if (document == null) return false;
 
-            _context.Documents.Remove(document);
+            _context.Document.Remove(document);
             await _context.SaveChangesAsync();
             return true;
         }
