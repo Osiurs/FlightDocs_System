@@ -41,13 +41,6 @@ namespace FlightDocsAPI.Data
                 .WithMany(f => f.Assignments)
                 .HasForeignKey(a => a.FlightID)
                 .OnDelete(DeleteBehavior.Cascade); // Xóa chuyến bay sẽ xóa các phân công liên quan
-
-            // Thiết lập quan hệ giữa Flight và Document
-            modelBuilder.Entity<Document>()
-                .HasOne(d => d.Flight)
-                .WithMany(f => f.Document)
-                .HasForeignKey(d => d.FlightID)
-                .OnDelete(DeleteBehavior.Cascade); // Xóa chuyến bay sẽ xóa các tài liệu liên quan
         }
     }
 }

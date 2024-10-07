@@ -8,5 +8,6 @@ namespace FlightDocsAPI.Services
         Task<Document> GetDocumentByIdAsync(int id);
         Task<IEnumerable<Document>> GetDocumentsByFlightIdAsync(int flightId);
         Task<bool> DeleteDocumentAsync(int id);
+        Task<Document> UpdateDocumentAsync(int id, Document updatedDocument);
     }
 }

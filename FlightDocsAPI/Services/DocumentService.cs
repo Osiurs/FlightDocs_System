@@ -39,6 +39,24 @@ namespace FlightDocsAPI.Services
             return await _context.Document.Where(d => d.FlightID == flightId).ToListAsync();
         }
 
+        public async Task<Document> UpdateDocumentAsync(int id, Document updatedDocument)
+        {
+            var existingDocument = await _context.Document.FindAsync(id);
+            if (existingDocument == null) return null;
+
+            // Cập nhật các trường cần thiết
+            existingDocument.DocumentType = updatedDocument.DocumentType;
+            existingDocument.Content = updatedDocument.Content;
+            existingDocument.Status = updatedDocument.Status;
+            existingDocument.ModifiedAt = DateTime.Now; // Cập nhật thời gian chỉnh sửa
+
+            _context.Document.Update(existingDocument);
+            await _context.SaveChangesAsync();
+
+            return existingDocument;
+        }
+
+
         public async Task<bool> DeleteDocumentAsync(int id)
         {
             var document = await _context.Document.FindAsync(id);

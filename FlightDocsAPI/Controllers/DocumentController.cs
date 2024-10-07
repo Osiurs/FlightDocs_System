@@ -37,6 +37,25 @@ namespace FlightDocsAPI.Controllers
             return Ok(document);
         }
 
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateDocument(int id, [FromBody] Document model)
+        {
+            if (id != model.DocumentID)
+            {
+                return BadRequest("Document ID mismatch.");
+            }
+
+            var updatedDocument = await _documentService.UpdateDocumentAsync(id, model);
+            
+            if (updatedDocument == null)
+            {
+                return NotFound("Document not found.");
+            }
+
+            return Ok(updatedDocument);
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteDocument(int id)
         {
