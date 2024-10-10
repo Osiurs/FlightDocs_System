@@ -56,6 +56,24 @@ namespace FlightDocsAPI.Services
             return existingDocument;
         }
 
+        public async Task<Document> PatchDocumentAsync(Document document)
+        {
+            var existingDocument = await _context.Document.FindAsync(document.DocumentID);
+            
+            if (existingDocument == null)
+            {
+                throw new Exception("Document not found.");
+            }
+
+            // Cập nhật tất cả các thuộc tính đã thay đổi
+            _context.Entry(existingDocument).CurrentValues.SetValues(document);
+            existingDocument.ModifiedAt = DateTime.Now; // Cập nhật thời gian sửa đổi
+
+            await _context.SaveChangesAsync();
+            return existingDocument; // Trả về tài liệu đã được cập nhật
+        }
+
+
 
         public async Task<bool> DeleteDocumentAsync(int id)
         {

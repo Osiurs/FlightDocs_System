@@ -136,3 +136,5 @@ C:\Users\ADMIN\OneDrive\Documents\Intern\FlightDocs System\FlightDocsAPI\obj\Deb
 C:\Users\ADMIN\OneDrive\Documents\Intern\FlightDocs System\FlightDocsAPI\obj\Debug\net9.0\FlightDocsAPI.pdb
 C:\Users\ADMIN\OneDrive\Documents\Intern\FlightDocs System\FlightDocsAPI\obj\Debug\net9.0\FlightDocsAPI.genruntimeconfig.cache
 C:\Users\ADMIN\OneDrive\Documents\Intern\FlightDocs System\FlightDocsAPI\obj\Debug\net9.0\ref\FlightDocsAPI.dll
+C:\Users\ADMIN\OneDrive\Documents\Intern\FlightDocs System\FlightDocsAPI\bin\Debug\net9.0\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\ADMIN\OneDrive\Documents\Intern\FlightDocs System\FlightDocsAPI\bin\Debug\net9.0\Newtonsoft.Json.dll

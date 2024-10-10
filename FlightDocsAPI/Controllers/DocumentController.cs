@@ -1,6 +1,7 @@
 using FlightDocsAPI.Models;
 using FlightDocsAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace FlightDocsAPI.Controllers
 {
@@ -54,6 +55,38 @@ namespace FlightDocsAPI.Controllers
 
             return Ok(updatedDocument);
         }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> PatchDocument(int id, [FromBody] JsonPatchDocument<Document> patchDoc)
+        {
+            if (patchDoc == null)
+            {
+                return BadRequest("Invalid patch document.");
+            }
+
+            var document = await _documentService.GetDocumentByIdAsync(id);
+            if (document == null)
+            {
+                return NotFound("Document not found.");
+            }
+
+            // Áp dụng các thay đổi từ patchDoc vào đối tượng document
+            patchDoc.ApplyTo(document, (error) => ModelState.AddModelError("", error.ErrorMessage));
+
+            // Kiểm tra xem có lỗi sau khi patch hay không
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Cập nhật lại thời gian sửa đổi
+            document.ModifiedAt = DateTime.Now;
+
+            await _documentService.PatchDocumentAsync(document); // Lưu các thay đổi vào database
+
+            return Ok(document);
+        }
+
 
 
         [HttpDelete("{id}")]
