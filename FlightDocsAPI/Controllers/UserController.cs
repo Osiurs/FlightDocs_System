@@ -71,5 +71,55 @@ namespace FlightDocsAPI.Controllers
 
             return Ok(user);  // Trả về thông tin user
         }
+        [HttpPatch("change-username/{id}")]
+        public async Task<IActionResult> ChangeUsername(int id, [FromBody] JsonElement body)
+        {
+            if (!body.TryGetProperty("username", out var newUsernameElement))
+            {
+                return BadRequest("New username is required.");
+            }
+
+            string newUsername = newUsernameElement.GetString();
+            var result = await _userService.UpdateUsernameAsync(id, newUsername);
+
+            if (!result)
+            {
+                return NotFound("User not found or update failed.");
+            }
+
+            return Ok("Username updated successfully.");
+        }
+        [HttpPatch("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] JsonElement body)
+        {
+            if (!body.TryGetProperty("password", out var newPasswordElement))
+            {
+                return BadRequest("New password is required.");
+            }
+
+            string newPassword = newPasswordElement.GetString();
+            var result = await _userService.UpdatePasswordAsync(id, newPassword);
+
+            if (!result)
+            {
+                return NotFound("User not found or update failed.");
+            }
+
+            return Ok("Password updated successfully.");
+        }
+        [HttpPatch("update-info/{id}")]
+        public async Task<IActionResult> UpdateUserInfo(int id, [FromBody] JsonElement updateData)
+        {
+            // Gọi service để cập nhật thông tin người dùng
+            var result = await _userService.UpdateUserInfoAsync(id, updateData);
+
+            if (!result)
+            {
+                return NotFound("User not found or update failed.");
+            }
+
+            return Ok("User information updated successfully.");
+        }
+
     }
 }

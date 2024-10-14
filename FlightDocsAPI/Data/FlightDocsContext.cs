@@ -27,20 +27,6 @@ namespace FlightDocsAPI.Data
 
             modelBuilder.Entity<Document>()
                 .HasKey(d => d.DocumentID); // Đặt khóa chính cho Document
-
-            // Thiết lập quan hệ giữa User và UserFlightAssignment
-            modelBuilder.Entity<UserFlightAssignment>()
-                .HasOne(a => a.User)
-                .WithMany(u => u.Assignments)
-                .HasForeignKey(a => a.UserID)
-                .OnDelete(DeleteBehavior.Cascade); // Xóa người dùng sẽ xóa các phân công liên quan
-
-            // Thiết lập quan hệ giữa Flight và UserFlightAssignment
-            modelBuilder.Entity<UserFlightAssignment>()
-                .HasOne(a => a.Flight)
-                .WithMany(f => f.Assignments)
-                .HasForeignKey(a => a.FlightID)
-                .OnDelete(DeleteBehavior.Cascade); // Xóa chuyến bay sẽ xóa các phân công liên quan
         }
     }
 }

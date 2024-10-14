@@ -1,3 +1,6 @@
+using System;
+using System.Text.Json.Serialization;
+
 namespace FlightDocsAPI.Models
 {
     public class UserFlightAssignment
@@ -7,8 +10,5 @@ namespace FlightDocsAPI.Models
         public int FlightID { get; set; }
         public string RoleOnFlight { get; set; }
         public DateTime AssignmentDate { get; set; }
-
-        public User User { get; set; }
-        public Flight Flight { get; set; }
     }
 }

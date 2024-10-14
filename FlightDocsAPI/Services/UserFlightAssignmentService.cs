@@ -1,6 +1,7 @@
 using FlightDocsAPI.Data;
 using FlightDocsAPI.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace FlightDocsAPI.Services
 {
@@ -30,9 +31,9 @@ namespace FlightDocsAPI.Services
         }
 
         // Phân công người dùng vào chuyến bay
-        public async Task<UserFlightAssignment> AssignUserToFlightAsync(UserFlightAssignment assignment)
+         public async Task<UserFlightAssignment> AssignUserToFlightAsync(UserFlightAssignment assignment)
         {
-            _context.UserFlightAssignments.Add(assignment);
+            await _context.UserFlightAssignments.AddAsync(assignment);
             await _context.SaveChangesAsync();
             return assignment;
         }
@@ -46,6 +47,27 @@ namespace FlightDocsAPI.Services
             _context.UserFlightAssignments.Remove(assignment);
             await _context.SaveChangesAsync();
             return true;
+        }
+       public async Task<bool> PatchAssignmentAsync(int assignmentId, UserFlightAssignment updatedAssignment)
+        {
+            // Tìm assignment theo assignmentId
+            var assignment = await _context.UserFlightAssignments.FindAsync(assignmentId);
+            if (assignment == null)
+            {
+                return false;
+            }
+
+            // Cập nhật thông tin cho assignment
+            assignment.UserID = updatedAssignment.UserID;
+            assignment.FlightID = updatedAssignment.FlightID;
+            assignment.RoleOnFlight = updatedAssignment.RoleOnFlight; // Cập nhật thuộc tính cần thiết
+            assignment.AssignmentDate = updatedAssignment.AssignmentDate;
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            _context.UserFlightAssignments.Update(assignment);
+           var updated = await _context.SaveChangesAsync();
+
+            return updated > 0; // Trả về assignment đã cập nhật
         }
     }
 }

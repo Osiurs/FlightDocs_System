@@ -38,24 +38,26 @@ namespace FlightDocsAPI.Controllers
             return Ok(document);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateDocument(int id, [FromBody] Document model)
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateDocument(int id, [FromBody] Document document)
         {
-            if (id != model.DocumentID)
+            if (id != document.DocumentID)
             {
                 return BadRequest("Document ID mismatch.");
             }
 
-            var updatedDocument = await _documentService.UpdateDocumentAsync(id, model);
-            
-            if (updatedDocument == null)
+            var result = await _documentService.UpdateDocumentAsync(id, document);
+
+            if (!result)
             {
-                return NotFound("Document not found.");
+                return NotFound("Document not found or update failed.");
             }
 
-            return Ok(updatedDocument);
+            return Ok(document);
         }
 
+
+        /*
         [HttpPatch("{id}")]
         public async Task<IActionResult> PatchDocument(int id, [FromBody] JsonPatchDocument<Document> patchDoc)
         {
@@ -85,7 +87,7 @@ namespace FlightDocsAPI.Controllers
             await _documentService.PatchDocumentAsync(document); // Lưu các thay đổi vào database
 
             return Ok(document);
-        }
+        }*/
 
 
 

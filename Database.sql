@@ -24,7 +24,7 @@ CREATE TABLE Flight (
     CreatedAt DATETIME DEFAULT GETDATE()    -- Thời gian tạo
 );
 
-CREATE TABLE UserFlightAssignment (
+CREATE TABLE UserFlightAssignments (
     AssignmentID INT PRIMARY KEY IDENTITY(1,1), -- Khóa chính tự tăng
     UserID INT NOT NULL,                        -- Khóa ngoại liên kết với bảng Users
     FlightID INT NOT NULL,                      -- Khóa ngoại liên kết với bảng Flight
