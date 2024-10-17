@@ -1,4 +1,3 @@
-using FlightDocsAPI.Models;
 using FlightDocsAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.JsonPatch;
@@ -31,15 +30,14 @@ namespace FlightDocsAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AssignUserToFlight([FromBody] UserFlightAssignment assignment)
+        public async Task<IActionResult> AssignUserToFlight([FromBody] UserFlightAssignmentDto assignmentDto)
         {
-            if (assignment == null)
+            if (assignmentDto == null)
             {
-                return BadRequest("Assignment cannot be null.");
+                return BadRequest("Assignment data is null.");
             }
 
-            // Gọi service để thêm assignment
-            var result = await _assignmentService.AssignUserToFlightAsync(assignment);
+            var result = await _assignmentService.AssignUserToFlightAsync(assignmentDto);
             return CreatedAtAction(nameof(GetAssignmentsByUserId), new { userId = result.UserID }, result);
         }
 
@@ -50,23 +48,17 @@ namespace FlightDocsAPI.Controllers
             if (!result) return NotFound();
             return NoContent();
         }
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PatchAssignmentAsync(int id, [FromBody] UserFlightAssignment flightAssignment)
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateAssignment(int id, [FromBody] UserFlightAssignmentDto assignmentDto)
         {
-            if (id != flightAssignment.AssignmentID)
+            if (!await _assignmentService.UpdateAssignmentAsync(id, assignmentDto))
             {
-                return BadRequest("UserFlightAssignment ID mismatch.");
+                return NotFound("Assignment not found or update failed.");
             }
 
-            var result = await _assignmentService.PatchAssignmentAsync(id, flightAssignment);
-
-            if (result == null)
-            {
-                return NotFound("UserFlightAssignment not found or update failed.");
-            }
-
-            return Ok(flightAssignment);
+            return Ok("Assignment updated successfully.");
         }
-
     }
+
 }

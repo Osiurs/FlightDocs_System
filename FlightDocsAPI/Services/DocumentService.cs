@@ -1,93 +1,89 @@
 using FlightDocsAPI.Data;
-using FlightDocsAPI.Models;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace FlightDocsAPI.Services
 {
     public class DocumentService : IDocumentService
+{
+    private readonly FlightDocsContext _context;
+
+    public DocumentService(FlightDocsContext context)
     {
-        private readonly FlightDocsContext _context;
-
-        public DocumentService(FlightDocsContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<Document> UploadDocumentAsync(Document model)
-        {
-            var document = new Document
-            {
-                FlightID = model.FlightID,
-                DocumentType = model.DocumentType,
-                Content = model.Content,
-                CreatedAt = DateTime.Now,
-                ModifiedAt = DateTime.Now
-            };
-
-            _context.Document.Add(document);
-            await _context.SaveChangesAsync();
-            return document;
-        }
-
-        public async Task<Document> GetDocumentByIdAsync(int id)
-        {
-            return await _context.Document.FindAsync(id);
-        }
-
-        public async Task<IEnumerable<Document>> GetDocumentsByFlightIdAsync(int flightId)
-        {
-            return await _context.Document.Where(d => d.FlightID == flightId).ToListAsync();
-        }
-
-        public async Task<bool> UpdateDocumentAsync(int id, Document document)
-    {
-        var existingDocument = await GetDocumentByIdAsync(id);
-
-        if (existingDocument == null)
-        {
-            return false; // Document không tồn tại
-        }
-
-        // Cập nhật các trường của document
-        existingDocument.FlightID = document.FlightID;
-        existingDocument.DocumentType = document.DocumentType;
-        existingDocument.Content = document.Content;
-        existingDocument.Status = document.Status;
-        existingDocument.ModifiedAt = DateTime.Now;
-
-        // Lưu thay đổi vào database
-        _context.Document.Update(existingDocument);
-        var updated = await _context.SaveChangesAsync();
-        return updated > 0;
+        _context = context;
     }
 
-        public async Task<Document> PatchDocumentAsync(Document document)
+    public async Task<DocumentDto> UploadDocumentAsync(DocumentDto documentDto)
+    {
+        var document = new Document
         {
-            var existingDocument = await _context.Document.FindAsync(document.DocumentID);
-            
-            if (existingDocument == null)
-            {
-                throw new Exception("Document not found.");
-            }
+            FlightID = documentDto.FlightID,
+            DocumentType = documentDto.DocumentType,
+            Content = documentDto.Content,
+            Status = documentDto.Status,
+            CreatedAt = DateTime.Now,
+            ModifiedAt = DateTime.Now
+        };
 
-            // Cập nhật tất cả các thuộc tính đã thay đổi
-            _context.Entry(existingDocument).CurrentValues.SetValues(document);
-            existingDocument.ModifiedAt = DateTime.Now; // Cập nhật thời gian sửa đổi
+        _context.Document.Add(document);
+        await _context.SaveChangesAsync();
 
-            await _context.SaveChangesAsync();
-            return existingDocument; // Trả về tài liệu đã được cập nhật
-        }
-
-
-
-        public async Task<bool> DeleteDocumentAsync(int id)
-        {
-            var document = await _context.Document.FindAsync(id);
-            if (document == null) return false;
-
-            _context.Document.Remove(document);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        return documentDto;
     }
+
+    public async Task<DocumentDto> GetDocumentByIdAsync(int id)
+    {
+        var document = await _context.Document.FindAsync(id);
+        if (document == null) return null;
+
+        return new DocumentDto
+        {
+            FlightID = document.FlightID,
+            DocumentType = document.DocumentType,
+            Content = document.Content,
+            Status = document.Status
+        };
+    }
+
+    public async Task<IEnumerable<DocumentDto>> GetDocumentsByFlightIdAsync(int flightId)
+    {
+        return await _context.Document
+            .Where(d => d.FlightID == flightId)
+            .Select(d => new DocumentDto
+            {
+                FlightID = d.FlightID,
+                DocumentType = d.DocumentType,
+                Content = d.Content,
+                Status = d.Status
+            })
+            .ToListAsync();
+    }
+
+    public async Task<bool> UpdateDocumentAsync(int id, DocumentDto documentDto)
+    {
+        var document = await _context.Document.FindAsync(id);
+        if (document == null) return false;
+
+        document.DocumentType = documentDto.DocumentType;
+        document.Content = documentDto.Content;
+        document.Status = documentDto.Status;
+        document.ModifiedAt = DateTime.Now;
+
+        _context.Document.Update(document);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> DeleteDocumentAsync(int id)
+    {
+        var document = await _context.Document.FindAsync(id);
+        if (document == null) return false;
+
+        _context.Document.Remove(document);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+}
+
 }

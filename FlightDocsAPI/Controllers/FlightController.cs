@@ -1,4 +1,4 @@
-using FlightDocsAPI.Models;
+
 using FlightDocsAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -31,9 +31,9 @@ namespace FlightDocsAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateFlight([FromBody] Flight flight)
+        public async Task<IActionResult> CreateFlight([FromBody] FlightDto flightDto)
         {
-            var createdFlight = await _flightService.CreateFlightAsync(flight);
+            var createdFlight = await _flightService.CreateFlightAsync(flightDto);
             return CreatedAtAction(nameof(GetFlight), new { id = createdFlight.FlightID }, createdFlight);
         }
 
@@ -44,5 +44,14 @@ namespace FlightDocsAPI.Controllers
             if (!result) return NotFound();
             return NoContent();
         }
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateFlightAsync(int id, [FromBody] FlightDto flightDto)
+        {
+            var result = await _flightService.UpdateFlightAsync(id, flightDto);
+            if (!result) return NotFound("Flight not found or update failed.");
+
+            return Ok("Flight information updated successfully.");
+        }
     }
+
 }

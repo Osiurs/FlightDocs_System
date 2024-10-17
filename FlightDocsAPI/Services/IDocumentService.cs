@@ -1,14 +1,14 @@
-using FlightDocsAPI.Models;
+
 
 namespace FlightDocsAPI.Services
 {
     public interface IDocumentService
     {
-        Task<Document> UploadDocumentAsync(Document model);
-        Task<Document> GetDocumentByIdAsync(int id);
-        Task<IEnumerable<Document>> GetDocumentsByFlightIdAsync(int flightId);
+        Task<DocumentDto> UploadDocumentAsync(DocumentDto documentDto);
+        Task<DocumentDto> GetDocumentByIdAsync(int id);
+        Task<IEnumerable<DocumentDto>> GetDocumentsByFlightIdAsync(int flightId);
+        Task<bool> UpdateDocumentAsync(int id, DocumentDto documentDto);
         Task<bool> DeleteDocumentAsync(int id);
-        Task<bool> UpdateDocumentAsync(int id, Document document);
-        Task<Document> PatchDocumentAsync(Document updatedDocument);
     }
+
 }

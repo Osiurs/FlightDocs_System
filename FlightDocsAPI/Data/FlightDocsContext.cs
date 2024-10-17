@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using FlightDocsAPI.Models;
+
 
 namespace FlightDocsAPI.Data
 {
@@ -27,6 +27,10 @@ namespace FlightDocsAPI.Data
 
             modelBuilder.Entity<Document>()
                 .HasKey(d => d.DocumentID); // Đặt khóa chính cho Document
+            modelBuilder.Entity<Document>()
+            .ToTable("Document");
+            modelBuilder.Entity<Flight>().ToTable("Flight");
+            modelBuilder.Entity<User>().ToTable("Users");
         }
     }
 }
