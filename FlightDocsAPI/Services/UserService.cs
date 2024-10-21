@@ -1,13 +1,17 @@
 using FlightDocsAPI.Data;
-
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Text;
 
 namespace FlightDocsAPI.Services
 {
     public class UserService : IUserService
 {
     private readonly FlightDocsContext _context;
+    private readonly string _secretKey = "J9S09Lv8YhqnI5OTpf0NqKjnHhc2oX6T";
 
     public UserService(FlightDocsContext context)
     {
@@ -45,13 +49,48 @@ namespace FlightDocsAPI.Services
         };
     }
 
+    private string GeneratePasswordToken(string password)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Hash, password) }),
+            Expires = DateTime.UtcNow.AddYears(1), // Thời gian hết hạn token
+            SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+        };
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        return tokenHandler.WriteToken(token);
+    }
+
+    // Phương thức giải mã token để lấy lại mật khẩu
+    private string DecodePasswordToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_secretKey);
+        var parameters = new TokenValidationParameters
+        {
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(key),
+            ValidateIssuer = false,
+            ValidateAudience = false
+        };
+
+        var claimsPrincipal = tokenHandler.ValidateToken(token, parameters, out _);
+        var passwordClaim = claimsPrincipal.FindFirst(ClaimTypes.Hash);
+        return passwordClaim?.Value;
+    }
+
     public async Task<UserDto> CreateUserAsync(UserDto userDto)
     {
+        // Mã hóa mật khẩu
+        var hashedPassword = GeneratePasswordToken(userDto.Password);
+
         var user = new User
         {
             Username = userDto.Username,
             Email = userDto.Email,
-            Password = userDto.Password,
+            Password = hashedPassword, // Lưu token mã hóa thay vì mật khẩu gốc
             Role = userDto.Role,
             FullName = userDto.FullName,
             PhoneNumber = userDto.PhoneNumber,
@@ -65,6 +104,7 @@ namespace FlightDocsAPI.Services
         return userDto;
     }
 
+
     public async Task<bool> DeleteUserAsync(int userId)
     {
         var user = await _context.Users.FindAsync(userId);
@@ -77,8 +117,14 @@ namespace FlightDocsAPI.Services
 
     public async Task<UserDto> AuthenticateAsync(string email, string password)
     {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email && u.Password == password);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
         if (user == null) return null;
+
+        // Giải mã mật khẩu đã lưu
+        var decodedPassword = DecodePasswordToken(user.Password);
+
+        // So sánh mật khẩu người dùng nhập với mật khẩu đã giải mã
+        if (decodedPassword != password) return null;
 
         return new UserDto
         {
@@ -90,7 +136,6 @@ namespace FlightDocsAPI.Services
             Status = user.Status
         };
     }
-
     public async Task<bool> UpdateUsernameAsync(int userId, string newUsername)
     {
         var user = await _context.Users.FindAsync(userId);
@@ -106,7 +151,9 @@ namespace FlightDocsAPI.Services
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return false;
 
-        user.Password = newPassword;
+        // Mã hóa mật khẩu mới
+        user.Password = GeneratePasswordToken(newPassword);
+
         await _context.SaveChangesAsync();
         return true;
     }
