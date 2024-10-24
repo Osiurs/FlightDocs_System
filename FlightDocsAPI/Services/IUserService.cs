@@ -10,7 +10,6 @@ namespace FlightDocsAPI.Services
     Task<UserDto> CreateUserAsync(UserDto userDto);
     Task<bool> DeleteUserAsync(int userId);
     Task<UserDto> AuthenticateAsync(string email, string password);
-    Task<bool> UpdateUsernameAsync(int userId, string newUsername);
     Task<bool> UpdatePasswordAsync(int userId, string newPassword);
     Task<bool> UpdateUserInfoAsync(int userId, JsonElement updateData);
 }

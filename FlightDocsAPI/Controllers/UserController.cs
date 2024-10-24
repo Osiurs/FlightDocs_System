@@ -64,21 +64,6 @@ namespace FlightDocsAPI.Controllers
             return Ok(user);
         }
 
-        [HttpPatch("change-username/{id}")]
-        public async Task<IActionResult> ChangeUsername(int id, [FromBody] JsonElement body)
-        {
-            if (!body.TryGetProperty("username", out var newUsernameElement))
-            {
-                return BadRequest("New username is required.");
-            }
-
-            string newUsername = newUsernameElement.GetString();
-            var result = await _userService.UpdateUsernameAsync(id, newUsername);
-            if (!result) return NotFound("User not found or update failed.");
-
-            return Ok("Username updated successfully.");
-        }
-
         [HttpPatch("change-password/{id}")]
         public async Task<IActionResult> ChangePassword(int id, [FromBody] JsonElement body)
         {

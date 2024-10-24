@@ -136,15 +136,6 @@ namespace FlightDocsAPI.Services
             Status = user.Status
         };
     }
-    public async Task<bool> UpdateUsernameAsync(int userId, string newUsername)
-    {
-        var user = await _context.Users.FindAsync(userId);
-        if (user == null) return false;
-
-        user.Username = newUsername;
-        await _context.SaveChangesAsync();
-        return true;
-    }
 
     public async Task<bool> UpdatePasswordAsync(int userId, string newPassword)
     {
@@ -166,6 +157,10 @@ namespace FlightDocsAPI.Services
         if (updateData.TryGetProperty("email", out var emailElement))
         {
             user.Email = emailElement.GetString();
+        }
+        if (updateData.TryGetProperty("username", out var usernameElement))
+        {
+            user.Username = usernameElement.GetString();
         }
 
         if (updateData.TryGetProperty("fullName", out var fullNameElement))
