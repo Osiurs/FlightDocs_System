@@ -19,6 +19,7 @@ namespace FlightDocsAPI.Services
             .Where(a => a.UserID == userId)
             .Select(a => new UserFlightAssignmentDto
             {
+                AssignmentID = a.AssignmentID,
                 UserID = a.UserID,
                 FlightID = a.FlightID,
                 RoleOnFlight = a.RoleOnFlight,
@@ -33,6 +34,7 @@ namespace FlightDocsAPI.Services
             .Where(a => a.FlightID == flightId)
             .Select(a => new UserFlightAssignmentDto
             {
+                AssignmentID = a.AssignmentID,
                 UserID = a.UserID,
                 FlightID = a.FlightID,
                 RoleOnFlight = a.RoleOnFlight,
